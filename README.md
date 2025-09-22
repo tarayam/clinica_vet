@@ -46,3 +46,31 @@ Notas
 -----
 - No subas archivos con credenciales ni el `SECRET_KEY`.
 - Se recomienda usar un archivo `.env` excluido por `.gitignore` para variables sensibles.
+
+Uso con Docker (desarrollo)
+--------------------------
+Este proyecto incluye un `Dockerfile` y `docker-compose.yml` para levantar un servicio web y una base MySQL para desarrollo.
+
+1. Copia el archivo de ejemplo y ajusta valores:
+
+```powershell
+copy .env.example .env
+```
+
+2. Levantar los servicios:
+
+```powershell
+docker compose up --build
+```
+
+3. Ejecutar migraciones dentro del contenedor web (opcional si no están aplicadas):
+
+```powershell
+docker compose exec web python manage.py migrate
+docker compose exec web python manage.py createsuperuser
+```
+
+Notas Docker
+------------
+- La base MySQL queda accesible en el servicio `db` dentro de la red de Docker. Las variables en `.env` se usan en `docker-compose.yml`.
+- No uses este `docker-compose` en producción sin asegurar contraseñas y ajustes de persistencia/backups.
