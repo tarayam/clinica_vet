@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ mascota|default:'Nueva Mascota' }}</h2>
+<form method="post" enctype="multipart/form-data" class="row g-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="col-12">
+    <button class="btn btn-primary">Guardar</button>
+    <a class="btn btn-secondary" href="/">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

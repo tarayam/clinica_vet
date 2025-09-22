@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Nuevo Dueño</h2>
+<form method="post" class="row g-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="col-12">
+    <button class="btn btn-success">Crear</button>
+    <a class="btn btn-secondary" href="/">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
