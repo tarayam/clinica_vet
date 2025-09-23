@@ -1,11 +1,24 @@
 import os
+import os
 from pathlib import Path
+import ast
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-change-me'
-DEBUG = True
-ALLOWED_HOSTS = []
+# Load sensitive settings from environment variables with safe defaults for
+# local development. Use a .env file or your environment in production.
+def env_bool(val, default=False):
+    if val is None:
+        return default
+    try:
+        return ast.literal_eval(val.title())
+    except Exception:
+        return val.lower() in ('1', 'true', 'yes', 'on')
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-me')
+DEBUG = env_bool(os.environ.get('DEBUG'), True)
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,20 +60,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'clinica_vet.wsgi.application'
 
-# --- MySQL (XAMPP) ---
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'clinica_db',
-        'USER': 'clinica_user',
-        'PASSWORD': 'ClinicaPass123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+# Database configuration: read from environment variables (supports Docker).
+DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.mysql')
+DB_NAME = os.environ.get('DB_NAME', 'clinica_db')
+DB_USER = os.environ.get('DB_USER', 'clinica_user')
+DB_PASSWORD = os.environ.get('DB_PASSWORD', 'ClinicaPass123')
+DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
+DB_PORT = os.environ.get('DB_PORT', '3306')
+
+if DB_ENGINE == 'django.db.backends.sqlite3':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': DB_ENGINE,
+            'NAME': DB_NAME,
+            'USER': DB_USER,
+            'PASSWORD': DB_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -82,3 +110,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+

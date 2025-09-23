@@ -40,5 +40,6 @@ body::before {
 .badge-indet{background:#6c757d1a;color:#6c757d;border:1px solid #6c757d55;}
 
 footer.vet{background:rgba(11,30,74,.85);color:#cbd5e1;border-top-left-radius:1rem;border-top-right-radius:1rem;padding:1rem 0;backdrop-filter:blur(4px);} 
+body.d-flex.flex-column.min-vh-100 > footer.vet { margin-top:2rem; }
 
 @media (max-width:768px){ .kv{grid-template-columns:120px 1fr;} }

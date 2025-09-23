@@ -1,12 +1,61 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Nuevo Dueño</h2>
-<form method="post" class="row g-3">
+
+<form method="post" class="row g-3" novalidate>
   {% csrf_token %}
-  {{ form.as_p }}
-  <div class="col-12">
-    <button class="btn btn-success">Crear</button>
-    <a class="btn btn-secondary" href="/">Cancelar</a>
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %}
+
+  <!-- RUT con mensaje claro si es inválido -->
+  <div class="col-md-4">
+    <label class="form-label">RUT</label>
+    {{ form.rut }}
+    {% if form.rut.errors %}
+      <div class="text-danger small mt-1">{{ form.rut.errors.0 }}</div>
+    {% else %}
+      <div class="form-text">Ej: 12.345.678-5</div>
+    {% endif %}
   </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Nombres</label>
+    {{ form.nombres }}
+    {% if form.nombres.errors %}<div class="text-danger small">{{ form.nombres.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Apellidos</label>
+    {{ form.apellidos }}
+    {% if form.apellidos.errors %}<div class="text-danger small">{{ form.apellidos.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Fono 1</label>
+    {{ form.fono1 }}
+    {% if form.fono1.errors %}<div class="text-danger small">{{ form.fono1.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Email</label>
+    {{ form.email }}
+    {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Fono 2</label>
+    {{ form.fono2 }}
+    {% if form.fono2.errors %}<div class="text-danger small">{{ form.fono2.errors.0 }}</div>{% endif %}
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-success">Crear</button>
+    <a class="btn btn-secondary" href="{% url 'home' %}">Cancelar</a>
+  </div>
+
+  <!-- volver al formulario de mascota -->
+  <input type="hidden" name="next" value="{{ next }}">
 </form>
 {% endblock %}

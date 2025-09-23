@@ -1,12 +1,68 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>{{ mascota|default:'Nueva Mascota' }}</h2>
+<h2 class="mb-3">{% if mascota %}Editar Mascota{% else %}Nueva Mascota{% endif %}</h2>
+
 <form method="post" enctype="multipart/form-data" class="row g-3">
   {% csrf_token %}
-  {{ form.as_p }}
-  <div class="col-12">
+
+  <!-- Dueño (única vez) -->
+  <div class="col-md-6">
+    <label class="form-label">Dueño/a</label>
+    <div class="d-flex gap-2">
+      {{ form.dueno }}
+      <a class="btn btn-outline-secondary btn-sm"
+         href="{% url 'dueno_nuevo' %}?next={{ request.get_full_path|urlencode }}">
+        + Nuevo dueño
+      </a>
+    </div>
+    <div class="form-text">Si no aparece en la lista, créalo y volverás a este formulario.</div>
+  </div>
+
+  <!-- Especie -->
+  <div class="col-md-6">
+    <label class="form-label">Especie</label>
+    {{ form.especie }}
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Nombre</label>
+    {{ form.nombre }}
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Sexo</label>
+    {{ form.sexo }}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Edad (años)</label>
+    {{ form.edad }}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">N° de chip</label>
+    {{ form.n_chip }}
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">Raza</label>
+    {{ form.raza }}
+  </div>
+
+  <div class="col-md-12">
+    <label class="form-label">Imagen</label>
+    {{ form.imagen }}
+  </div>
+
+  <div class="col-12 d-flex gap-2">
     <button class="btn btn-primary">Guardar</button>
-    <a class="btn btn-secondary" href="/">Cancelar</a>
+    <a class="btn btn-secondary" href="{% url 'home' %}">Cancelar</a>
+
+    {% if mascota %}
+      <a href="{% url 'atencion_nueva' mascota.id %}" class="btn btn-outline-success">
+        Registrar Atención
+      </a>
+    {% endif %}
   </div>
 </form>
 {% endblock %}

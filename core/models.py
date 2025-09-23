@@ -1,4 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
+from datetime import time
+from django.core.exceptions import ValidationError
+
 
 class Especie(models.Model):  # Admin-only (equivale a Categoría)
     nombre = models.CharField(max_length=50, unique=True)
@@ -26,3 +30,58 @@ class Mascota(models.Model):  # CRUD en frontend (equivale a Producto)
     raza = models.CharField(max_length=60, blank=True)
     imagen = models.ImageField(upload_to='mascotas/', null=True, blank=True)
     def __str__(self): return f"{self.nombre} ({self.especie})"
+
+class Veterinario(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nombre_publico = models.CharField(max_length=100)
+
+    def __str__(self):
+    # Siempre muestra algo legible en los selects
+        return (self.nombre_publico or self.user.get_full_name() or self.user.username).strip()
+
+
+class Atencion(models.Model):
+    mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE, related_name='atenciones')
+    veterinario = models.ForeignKey(Veterinario, on_delete=models.PROTECT, related_name='atenciones')
+    fecha = models.DateTimeField(auto_now_add=True)
+    diagnostico = models.TextField()
+    tratamiento = models.TextField()
+    observaciones = models.TextField(blank=True)
+    fecha_control = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Atención {self.id} - {self.mascota.nombre}"
+
+class Receta(models.Model):
+    atencion = models.OneToOneField(Atencion, on_delete=models.CASCADE, related_name='receta')
+    creada_en = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Receta #{self.id} - {self.atencion.mascota.nombre}"
+
+class RecetaItem(models.Model):
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='items')
+    medicamento = models.CharField(max_length=120)
+    indicaciones = models.TextField()
+
+    def __str__(self):
+        return self.medicamento
+
+class HoraAtencion(models.Model):
+    mascota = models.ForeignKey(Mascota, on_delete=models.PROTECT, related_name='citas')
+    veterinario = models.ForeignKey(Veterinario, on_delete=models.PROTECT, related_name='citas')
+    inicio = models.DateTimeField()
+    fin = models.DateTimeField()
+
+    def clean(self):
+        # sin turnos; lun-sab; 09:00–18:00
+        if self.inicio.weekday() == 6 or self.fin.weekday() == 6:
+            raise ValidationError("Solo se atiende de lunes a sábado (sin domingos).")
+        if not (time(9,0) <= self.inicio.time() <= time(18,0) and time(9,0) <= self.fin.time() <= time(18,0)):
+            raise ValidationError("Horario hábil: 09:00 a 18:00.")
+        if self.fin <= self.inicio:
+            raise ValidationError("La hora de término debe ser posterior al inicio.")
+
+    def __str__(self):
+        return f"{self.inicio:%Y-%m-%d %H:%M} - {self.mascota.nombre}"
+

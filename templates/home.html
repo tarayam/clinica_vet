@@ -1,22 +1,52 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="mb-3">Especies</h1>
-<div class="row g-3">
+
+<section class="hero mb-4">
+  <h1 class="display-6 fw-bold"><i class="bi bi-heart-pulse me-2"></i>Sistema de Gestión Veterinaria</h1>
+  <p class="lead mb-0">Gestión integral de mascotas, agenda y atenciones. Selecciona una especie para ver sus mascotas.</p>
+</section>
+
+<h5 class="mb-3"><i class="bi bi-grid-3x3-gap me-1"></i>Categorías de Especies</h5>
+<div class="row g-3 mb-4">
   {% for cat in especies %}
-  <div class="col-md-4">
-    <div class="card h-100 shadow-sm">
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="card vet h-100">
       {% if cat.imagen %}
-      <img src="{{ cat.imagen.url }}" class="card-img-top" alt="{{ cat.nombre }}">
+        <img src="{{ cat.imagen.url }}" class="card-img-top" alt="{{ cat.nombre }}">
+      {% else %}
+        <img src="https://picsum.photos/seed/{{ cat.id }}/600/300" class="card-img-top" alt="{{ cat.nombre }}">
       {% endif %}
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title">{{ cat.nombre }}</h5>
-        <p class="card-text text-muted">{{ cat.descripcion|truncatechars:120 }}</p>
-        <a href="{% url 'mascotas_por_especie' cat.id %}" class="btn btn-primary mt-auto">Ver mascotas</a>
+      <div class="card-body">
+        <h5 class="card-title mb-1">{{ cat.nombre }}</h5>
+        <p class="text-muted mb-3">{{ cat.descripcion|default:'Sin descripción'|truncatechars:120 }}</p>
+        <div class="mt-auto d-flex gap-2">
+          <a href="{% url 'mascotas_por_especie' cat.id %}" class="btn btn-primary"><i class="bi bi-eye me-1"></i>Ver Mascotas</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'mascota_nueva' %}" class="btn btn-soft"><i class="bi bi-wrench-adjustable-circle me-1"></i>Mantenedor</a>
+          {% else %}
+            <a href="{% url 'login' %}?next={% url 'mascota_nueva' %}" class="btn btn-soft">Mantenedor</a>
+          {% endif %}
+        </div>
       </div>
+      <div class="card-footer bg-white border-0 text-muted small">ID: {{ cat.id }}</div>
     </div>
   </div>
   {% empty %}
-  <p>No hay especies cargadas. Entra a <a href="/admin/">/admin/</a> y crea algunas.</p>
+  <p>No hay especies. Crea algunas en <a href="/admin/">Admin</a>.</p>
   {% endfor %}
 </div>
+
+<div class="section-box">
+  <h5 class="mb-2"><i class="bi bi-clipboard2-pulse me-1"></i>Gestión de Mascotas</h5>
+  <p class="text-muted">Accede al listado general o registra una nueva mascota.</p>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'mascotas_all' %}" class="btn btn-outline-primary"><i class="bi bi-list-ul me-1"></i>Ver Todas las Mascotas</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'mascota_nueva' %}" class="btn btn-danger"><i class="bi bi-plus-circle me-1"></i>Registrar Nueva Mascota</a>
+    {% else %}
+      <a href="{% url 'login' %}?next={% url 'mascota_nueva' %}" class="btn btn-danger">Registrar Nueva Mascota</a>
+    {% endif %}
+  </div>
+</div>
+
 {% endblock %}
