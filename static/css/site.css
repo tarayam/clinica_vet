@@ -1,0 +1,5 @@
+body { font-family: system-ui, Arial, sans-serif; }
+.navbar-brand { letter-spacing: .5px; }
+footer { font-size: 0.85rem; }
+.alert { animation: fadeIn .4s ease-in; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(-4px);} to { opacity:1; transform: translateY(0);} }
