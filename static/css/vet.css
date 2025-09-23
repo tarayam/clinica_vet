@@ -1,0 +1,44 @@
+/* Vet Skin - con fondo */
+:root { --vet-primary:#0d6efd; --vet-indigo:#4f46e5; }
+
+/* Fondo principal */
+body {
+  min-height:100vh;
+  background: #0f172a url("/static/img/fondos/fondo.jpg") center top fixed no-repeat;
+  background-size: cover; /* hace que la imagen abarque todo */
+  /* Si prefieres mosaico, comenta la línea anterior y descomenta: */
+  /* background-repeat: repeat; background-size: 320px 320px; */
+  color:#1e293b;
+}
+
+/* Capa semitransparente opcional para legibilidad: */
+body::before {
+  content:""; position:fixed; inset:0; background:rgba(255,255,255,.55); backdrop-filter: blur(2px);
+  z-index:-1;
+}
+
+.navbar-brand{font-weight:800;letter-spacing:.2px;}
+.navbar{background:rgba(0,0,0,.75)!important;backdrop-filter:blur(4px);} 
+
+.hero{background:linear-gradient(135deg,var(--vet-indigo),var(--vet-primary));color:#fff;border-radius:1rem;padding:2.2rem;box-shadow:0 10px 24px rgba(13,110,253,.25);}
+.hero .lead{opacity:.95}
+
+.card.vet{border:0;border-radius:1rem;box-shadow:0 8px 24px rgba(0,0,0,.08);background:#ffffffcc;backdrop-filter:blur(4px);} 
+.card.vet .card-img-top{object-fit:cover;height:160px;}
+.card.vet .card-body{display:flex;flex-direction:column;}
+
+.section-box{background:#ffffffcc;border-radius:.75rem;border:1px solid #e2e8f0;padding:1rem 1.25rem;backdrop-filter:blur(4px);} 
+.section-title{font-size:1rem;font-weight:700;color:#334155;margin-bottom:.5rem;}
+
+.kv{display:grid;grid-template-columns:160px 1fr;gap:.25rem .75rem;}
+.kv .k{color:#64748b;font-weight:600;text-align:right;}
+.kv .v{color:#1e293b;}
+
+.badge-chip{border-radius:999px;padding:.25rem .6rem;font-weight:600;}
+.badge-macho{background:#0d6efd1a;color:#0d6efd;border:1px solid #0d6efd55;}
+.badge-hembra{background:#d633841a;color:#d63384;border:1px solid #d6338455;}
+.badge-indet{background:#6c757d1a;color:#6c757d;border:1px solid #6c757d55;}
+
+footer.vet{background:rgba(11,30,74,.85);color:#cbd5e1;border-top-left-radius:1rem;border-top-right-radius:1rem;padding:1rem 0;backdrop-filter:blur(4px);} 
+
+@media (max-width:768px){ .kv{grid-template-columns:120px 1fr;} }
